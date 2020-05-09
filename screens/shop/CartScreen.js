@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native'
-import { useSelector } from 'react-redux'
+import { View, Text, StyleSheet, Button, FlatList } from 'react-native'
+import { useSelector, useDispatch } from 'react-redux'
 import Colors from '../../constants/Colors';
+import CartItem from '../../components/CartItem';
+import * as cartActions from  '../../store/action/carts'
+import * as orderActions from  '../../store/action/orders'
 
 const CartScreen = props => {
     const totalAmount = useSelector(state => state.carts.totalAmount);
@@ -13,18 +16,24 @@ const CartScreen = props => {
             productTitle: items[key].productTitle,
             productPrice: items[key].productPrice,
             sum: items[key].sum,
-            quantity: items[key].quntity
+            quantity: items[key].quantity
         });
     }
+    cartItems.sort((a,b) => a.productId > b.productId ? 1 : -1);
+    const dispatch = useDispatch();
+    console.log('cart-items')
+    console.log(cartItems);
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
-                <Text style={styles.summaryText}>TOTAL : <Text style={styles.amount}>${totalAmount}</Text></Text>
-                <Button title='Order Now' color={Colors.accent} onPress={() => {
-                    console.log("Order Now Pressed"); }} disabled={cartItems.length === 0} />
+                <Text style={styles.summaryText}>TOTAL : <Text style={styles.amount}>${totalAmount.toFixed(2)}</Text></Text>
+                <Button title='Order Now' color={Colors.accent} onPress={() => {dispatch(orderActions.addOrder(cartItems, totalAmount))}} disabled={cartItems.length === 0} />
             </View>
-            <View>
-                <Text>CART ITEMS</Text>
+            <View >
+                <FlatList data={cartItems} keyExtractor={item => item.productId}
+                renderItem={itemData => <CartItem title={itemData.item.productTitle} 
+                quantity={itemData.item.quantity} amount={itemData.item.sum} 
+                onRemove={() => {dispatch(cartActions.removeFromCart(itemData.item.productId))}} />}/>
             </View>
             
         </View>
@@ -46,6 +55,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         backgroundColor: 'white',
         borderRadius: 10,
+        margin: 10
     },
     summaryText: {
         fontSize: 18
