@@ -5,6 +5,7 @@ import Colors from '../../constants/Colors';
 import CartItem from '../../components/CartItem';
 import * as cartActions from  '../../store/action/carts'
 import * as orderActions from  '../../store/action/orders'
+import Card from '../../components/Card';
 
 const CartScreen = props => {
     const totalAmount = useSelector(state => state.carts.totalAmount);
@@ -25,20 +26,27 @@ const CartScreen = props => {
     console.log(cartItems);
     return (
         <View style={styles.screen}>
-            <View style={styles.summary}>
+            <Card style={styles.summary}>
                 <Text style={styles.summaryText}>TOTAL : <Text style={styles.amount}>${totalAmount.toFixed(2)}</Text></Text>
                 <Button title='Order Now' color={Colors.accent} onPress={() => {dispatch(orderActions.addOrder(cartItems, totalAmount))}} disabled={cartItems.length === 0} />
-            </View>
+            </Card>
             <View >
                 <FlatList data={cartItems} keyExtractor={item => item.productId}
                 renderItem={itemData => <CartItem title={itemData.item.productTitle} 
-                quantity={itemData.item.quantity} amount={itemData.item.sum} 
+                quantity={itemData.item.quantity} amount={itemData.item.sum} deletable
                 onRemove={() => {dispatch(cartActions.removeFromCart(itemData.item.productId))}} />}/>
             </View>
             
         </View>
     )
 
+}
+
+
+CartScreen.navigationOptions = navData => {
+    return{
+        headerTitle: "Your Cart"
+    }
 }
 
 const styles = StyleSheet.create({
@@ -49,12 +57,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
-        shadowColor: 'black',
-        shadowOpacity: 0.28,
-        shadowRadius: 8,
-        shadowOffset: { width: 0, height: 2 },
-        backgroundColor: 'white',
-        borderRadius: 10,
         margin: 10
     },
     summaryText: {

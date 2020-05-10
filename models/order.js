@@ -1,8 +1,16 @@
+import moment from 'moment';
+
 class Order{
-    constructor(id, item, amount, date){
+    constructor(id, items, amount, date){
         this.id = id;
-        this.item = item;
+        this.items = items;
         this.amount = amount;
         this.date = date;
     }
+
+    get readableDate(){
+        return moment(this.date).format('MMMM Do YYYY, hh:mm');
+    }
 }
+
+export default Order;
