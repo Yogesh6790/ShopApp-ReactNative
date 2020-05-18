@@ -7,13 +7,15 @@ export const deleteProduct = productId => {
 }
 
 export const createProduct = (title, description, image, price) => {
+    // const img = Array.isArray(image) ? image[0] : image;
+    console.log(title + " " + description + " " + img + " "+price);
     return {
         type: CREATE_PRODUCT,
         productData: {
-            title,
-            description,
-            image,
-            price
+            title : title,
+            description : description,
+            image: image,
+            price : price
         }
     }
 }

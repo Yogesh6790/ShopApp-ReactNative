@@ -30,7 +30,7 @@ const productsReducer = (state = initialState, action) => {
             const userProductIndex = state.userProducts.findIndex(product => product.id === action.productData.productId);
             const updatedUserProducts = { ...state.userProducts };
 
-            console.log(action.productData.productId)
+            // console.log(action.productData.productId)
             const updatedProduct = new Product(
                 action.productData.productId,
                 state.availableProducts[availableProductIndex].ownerId,
@@ -39,16 +39,16 @@ const productsReducer = (state = initialState, action) => {
                 action.productData.description,
                 state.availableProducts[availableProductIndex].price
             )
-            console.log(" updatedProduct " + updatedProduct);
+            // console.log(" updatedProduct " + updatedProduct);
             delete state.availableProducts[availableProductIndex];
             delete state.userProducts[userProductIndex];
             // updatedAvailableProducts[availableProductIndex] = updatedProduct;
             
-            console.log("DELETED")
-            console.log("** AVAILABLE **")
-            console.log(state.availableProducts);
-            console.log("** USER **")
-            console.log(state.userProducts);
+            // console.log("DELETED")
+            // console.log("** AVAILABLE **")
+            // console.log(state.availableProducts);
+            // console.log("** USER **")
+            // console.log(state.userProducts);
             // updatedUserProducts[userProductIndex] = updatedProduct;
             // console.log(userProducts);
             // console.log("*** STATE ***");
