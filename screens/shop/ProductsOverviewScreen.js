@@ -17,24 +17,40 @@ const selectItemHandler = (id, title, props) => {
 
 const ProductsOverViewScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState();
     const availableProducts = useSelector(state => state.products.availableProducts)
     const dispatch = useDispatch();
 
     const loadProducts = useCallback(async () => {
+        console.log("LOAD PRODUCTS");
         setError(null);
-        setIsLoading(true);
+        setIsRefreshing(true);
         try {
             await dispatch(productActions.fetchProducts());
         } catch (err) {
             setError(err.message)
         }
-        setIsLoading(false);
-    }, [dispatch]);
+        setIsRefreshing(false);
+    }, [dispatch,setIsLoading, setError]);
 
     useEffect(() => {
-        loadProducts();
-    }, [loadProducts]);
+        setIsLoading(true);
+        loadProducts().then(() => {
+            setIsLoading(false);
+        })
+    }, [dispatch]);
+
+
+
+    useEffect(() => {
+        const sub = props.navigation.addListener('focus', loadProducts)
+        return () => {
+            sub.remove();
+        }
+    },[loadProducts])
+
+
 
     if (error) {
         return (
@@ -45,8 +61,8 @@ const ProductsOverViewScreen = props => {
         )
     }
 
-    console.log(availableProducts);
-    console.log(isLoading);
+    // console.log(availableProducts);
+    // console.log(isLoading);
     if (!isLoading && (!availableProducts || availableProducts.length === 0)) {
         return (<View style={styles.centered}>
             <Text>No Products available! Try adding some!</Text>
@@ -62,6 +78,8 @@ const ProductsOverViewScreen = props => {
     }
 
     return <FlatList data={availableProducts}
+        onRefresh={loadProducts}
+        refreshing={isRefreshing}
         keyExtractor={item => item.id}
         renderItem={(itemData) => (
             <ProductItem image={itemData.item.imageUrl}

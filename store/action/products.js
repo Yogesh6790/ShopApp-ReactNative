@@ -3,18 +3,19 @@ import Product from "../../models/product";
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 export const CREATE_PRODUCT = 'CREATE_PRODUCT';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
-export const SET_PRODUCT = 'UPDATE_PRODUCT';
+export const SET_PRODUCT = 'SET_PRODUCT';
 
 export const fetchProducts = () => {
     try {
         return async dispatch => {
             //any async code could be execute before we could dispatch the action
-            const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.jon')
+            // console.log('Trigerring api');
+            const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.json')
             if (!response.ok) {
                 throw new Error('Some error occurred!')
             }
             const resData = await response.json();
-            console.log(resData);
+            // console.log(resData);
 
             const loadedProducts = [];
             for (const key in resData) {
@@ -38,50 +39,87 @@ export const fetchProducts = () => {
 }
 
 export const deleteProduct = productId => {
-    return { type: DELETE_PRODUCT, productId: productId }
+    try {
+        return async dispatch => {
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Some error occurred!')
+            }
+            dispatch({ type: DELETE_PRODUCT, productId: productId });
+        }
+    } catch (err) {
+        throw err;
+    }
 }
 
 export const createProduct = (title, description, image, price) => {
-    return async dispatch => {
-        //any async code could be execute before we could dispatch the action
-        const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title,
-                description,
-                image,
-                price
-            })
-        });
-
-        const resData = await response.json();
-        console.log(resData);
-
-        dispatch({
-            type: CREATE_PRODUCT,
-            productData: {
-                id: resData.name,
-                title: title,
-                description: description,
-                image: image,
-                price: price
+    try {
+        return async dispatch => {
+            //any async code could be execute before we could dispatch the action
+            const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    image,
+                    price
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Some error occurred!')
             }
-        })
+
+            const resData = await response.json();
+
+            dispatch({
+                type: CREATE_PRODUCT,
+                productData: {
+                    id: resData.name,
+                    title: title,
+                    description: description,
+                    image: image,
+                    price: price
+                }
+            })
+        }
+    } catch (err) {
+        throw err;
     }
 }
 
 export const updateProduct = (productId, title, description, image) => {
-    // console.log(productId + " " + title + " " + description + " " + image);
-    return {
-        type: UPDATE_PRODUCT,
-        productData: {
-            productId: productId,
-            title: title,
-            description: description,
-            image: image
+    return async dispatch => {
+        try {
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    image
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Something went wrong');
+            }
+            dispatch({
+                type: UPDATE_PRODUCT,
+                productData: {
+                    productId: productId,
+                    title: title,
+                    description: description,
+                    image: image
+                }
+            });
+        } catch (err) {
+            throw err;
         }
     }
 }

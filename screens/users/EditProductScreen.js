@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
-import { View, StyleSheet, ScrollView, Alert, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useCallback, useEffect, useReducer } from 'react';
+import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import HeaderBtn from '../../components/HeaderBtn';
 import * as productActions from '../../store/action/products';
 import Input from '../../components/Input';
+import Colors from '../../constants/Colors';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
@@ -23,9 +24,9 @@ const formReducer = (state, action) => {
             for (const key in updatedValidities) {
                 updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
             }
-            for (const key in updatedValidities) {
-                console.log(key + " " + updatedValidities[key]);
-            }
+            // for (const key in updatedValidities) {
+            //     console.log(key + " " + updatedValidities[key]);
+            // }
             return {
                 ...state,
                 formIsValid: updatedFormIsValid,
@@ -39,14 +40,16 @@ const formReducer = (state, action) => {
 }
 
 const EditProductScreen = props => {
+    const [isLoading, setIsLoading] = useState(false);
     const productId = props.navigation.getParam('productId');
     const selectedProduct = useSelector(state => state.products.userProducts.find(prod => prod.id === productId));
-    console.log("****selectedProduct***")
-    console.log(selectedProduct ? selectedProduct.title: '')
-    console.log(selectedProduct ? selectedProduct.price : '')
-    console.log(selectedProduct ? selectedProduct.imageUrl : '')
-    console.log(selectedProduct ? selectedProduct.description : '')
-    console.log("****selectedProduct***")
+
+    // console.log("****selectedProduct***")
+    // console.log(selectedProduct ? selectedProduct.title: '')
+    // console.log(selectedProduct ? selectedProduct.price : '')
+    // console.log(selectedProduct ? selectedProduct.imageUrl : '')
+    // console.log(selectedProduct ? selectedProduct.description : '')
+    // console.log("****selectedProduct***")
 
     const dispatch = useDispatch();
 
@@ -66,33 +69,41 @@ const EditProductScreen = props => {
         formIsValid: selectedProduct ? true : false
     })
 
-    const submitHandler = useCallback(() => {
-        console.log("formState.formIsValid " + formState.formIsValid)
-        console.log("formState.inputValues.title " + formState.inputValues.title)
-        console.log("formState.inputValues.imageUrl " + formState.inputValues.imageUrl)
-        console.log("formState.inputValues.price " + formState.inputValues.price)
-        console.log("formState.inputValues.description " + formState.inputValues.description)
+    const submitHandler = useCallback(async () => {
         if (!formState.formIsValid) {
             Alert.alert('Wrong Values Entered', 'Please ensure to input correct values in the fields', [{ text: 'Okay' }]);
             return;
         }
-        if (selectedProduct) {
-            dispatch(productActions.updateProduct(productId, formState.inputValues.title, formState.inputValues.description, formState.inputValues.imageUrl))
-        } else {
-            dispatch(productActions.createProduct(formState.inputValues.title, formState.inputValues.description, formState.inputValues.imageUrl, formState.inputValues.price))
+        try {
+            setIsLoading(true);
+            if (selectedProduct) {
+                await dispatch(
+                    productActions.updateProduct(
+                        productId,
+                        formState.inputValues.title,
+                        formState.inputValues.description,
+                        formState.inputValues.imageUrl))
+            } else {
+                await dispatch(productActions.createProduct(
+                    formState.inputValues.title,
+                    formState.inputValues.description,
+                    formState.inputValues.imageUrl,
+                    formState.inputValues.price))
+            }
+            props.navigation.goBack();
+        } catch (err) {
+            Alert.alert('Something went wrong', 'Some problem occurred', [{ text: 'Okay' }]);
         }
-        props.navigation.navigate('userProducts');
-
+        setIsLoading(false);
+        
     }, [dispatch, productId, formState]);
 
     useEffect(() => {
         props.navigation.setParams({ submit: submitHandler });
     }, [submitHandler]);
 
+
     const validateTextHandler = useCallback((inputIdentifier, inputValue, inputValidity) => {
-        // console.log("*** inputIdentifier **" + inputIdentifier)
-        // console.log("*** inputValue **"+inputValue)
-        // console.log("*** inputValidity **"+inputValidity)
         dispatchFormState({
             type: FORM_INPUT_UPDATE,
             value: inputValue,
@@ -100,6 +111,15 @@ const EditProductScreen = props => {
             input: inputIdentifier
         })
     }, [dispatchFormState])
+
+
+    if (isLoading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size='large' color={Colors.primary}/>
+            </View>
+        )
+    }
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' keyboardVerticalOffset={100}>
@@ -163,7 +183,11 @@ const styles = StyleSheet.create({
     form: {
         margin: 20
     },
-
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });
 
 export default EditProductScreen

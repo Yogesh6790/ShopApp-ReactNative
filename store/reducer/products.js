@@ -8,6 +8,7 @@ const initialState = {
 }
 
 const productsReducer = (state = initialState, action) => {
+    // console.log(action.products);
     switch (action.type) {
         case SET_PRODUCT:
             return {

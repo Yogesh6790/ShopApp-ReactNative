@@ -14,20 +14,23 @@ const cartsReducer = (state = initialState, action) => {
             const selectedProduct = action.product;
             let updatedOrNewProduct = null;
             if (state.items[selectedProduct.id]) {
+                console.log(parseFloat(state.items[selectedProduct.id].sum) + parseFloat(selectedProduct.price));
                 updatedOrNewProduct = new CartItem(state.items[selectedProduct.id].quantity + 1,
                     selectedProduct.title,
                     selectedProduct.price,
-                    state.items[selectedProduct.id].sum + selectedProduct.price);
+                    parseFloat(state.items[selectedProduct.id].sum) + parseFloat(selectedProduct.price));
 
             } else {
-                updatedOrNewProduct = new CartItem(1, selectedProduct.title, selectedProduct.price, selectedProduct.price);
+                updatedOrNewProduct = new CartItem(1, selectedProduct.title,
+                    parseFloat(selectedProduct.price),
+                    parseFloat(selectedProduct.price));
             }
             console.log('state.totalAmount' + state.totalAmount);
             console.log('selectedProduct.price' + selectedProduct.price);
             return {
                 ...state,
                 items: { ...state.items, [selectedProduct.id]: updatedOrNewProduct },
-                totalAmount: parseFloat(state.totalAmount + selectedProduct.price)
+                totalAmount: parseFloat(state.totalAmount) + parseFloat(selectedProduct.price)
             }
 
         case REMOVE_FROM_CART:
@@ -38,15 +41,16 @@ const cartsReducer = (state = initialState, action) => {
                     currentProduct.quantity - 1,
                     currentProduct.productTitle,
                     currentProduct.productPrice,
-                    currentProduct.sum - currentProduct.productPrice
+                    parseFloat(currentProduct.sum) - parseFloat(currentProduct.productPrice)
                 )}
             }else{
                 delete updatedCartItems[action.productId];
             }
+            // console.log("updatedCartItems ===> "+updatedCartItems);
             return {
                 ...state,
                 items: updatedCartItems,
-                totalAmount: parseFloat(state.totalAmount - currentProduct.productPrice)
+                totalAmount: parseFloat(state.totalAmount) - parseFloat(currentProduct.productPrice)
             }
         case ADD_ORDER:
             return initialState;
@@ -60,7 +64,7 @@ const cartsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 items: cartItems,
-                totalAmount: parseFloat(state.totalAmount - amountOfProduct)
+                totalAmount: parseFloat(state.totalAmount) - parseFloat(amountOfProduct)
             }
 
         default:

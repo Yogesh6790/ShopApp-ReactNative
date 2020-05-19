@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons'
 import Colors from '../constants/Colors';
 
 const CartItem = props => {
-    console.log('title ==> '+props.title)
-    console.log('quantity ==> '+props.quantity)
-    console.log('amount ==> '+props.amount)
+    // console.log('title ==> '+props.title)
+    // console.log('quantity ==> '+props.quantity)
+    // console.log('amount ==> '+props.amount)
     return (
         <View style={styles.cartItem}>
             <View style={styles.itemData}>

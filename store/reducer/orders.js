@@ -1,23 +1,26 @@
-import { ADD_ORDER } from "../action/orders";
+import { ADD_ORDER, SET_ORDER } from "../action/orders";
 import Order from "../../models/order";
+import { getActiveChildNavigationOptions } from "react-navigation";
 
 const initialState = {
     orders: []
 }
 
 const ordersReducer = (state=initialState, action) => {
-    switch(action.type){
+    switch (action.type) {
+        case SET_ORDER:
+            return {
+                orders : action.orders
+            }
         case ADD_ORDER:
-            // console.log("---- Add Order ----")
-            const newOrder = new Order(new Date().toString(),
+            const newOrder = new Order(action.orderData.id,
             action.orderData.items,
             action.orderData.amount,
-            new Date());
+            action.orderData.date);
             return {
                 ...state,
                 orders: state.orders.concat(newOrder)
             }
-            
         default:
             return {...state};
     }
