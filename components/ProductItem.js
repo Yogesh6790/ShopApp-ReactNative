@@ -4,8 +4,8 @@ import Colors from '../constants/Colors';
 import Card from './Card';
 
 const ProductItem = props => {
-    console.log("image "+props.image);
-    console.log("title "+props.title);
+    // console.log("image "+props.image);
+    // console.log("title "+props.title);
     return (
         <TouchableOpacity onPress={props.onSelect}>
             <Card style={styles.product}>

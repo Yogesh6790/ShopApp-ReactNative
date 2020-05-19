@@ -9,6 +9,7 @@ import Card from '../../components/Card';
 
 const CartScreen = props => {
     const totalAmount = useSelector(state => state.carts.totalAmount);
+    console.log(' ** totalAmount **'+totalAmount)
     const items = useSelector(state => state.carts.items);
     const cartItems = [];
     for(const key in items){

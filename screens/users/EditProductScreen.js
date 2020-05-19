@@ -13,11 +13,11 @@ const formReducer = (state, action) => {
         case FORM_INPUT_UPDATE:
             const updatedValues = {
                 ...state.inputValues,
-                [action.input]: [action.value]
+                [action.input]: action.value
             }
             const updatedValidities = {
                 ...state.inputValidities,
-                [action.input]: [action.isValid]
+                [action.input]: action.isValid
             }
             let updatedFormIsValid = true;
             for (const key in updatedValidities) {
@@ -28,7 +28,7 @@ const formReducer = (state, action) => {
             }
             return {
                 ...state,
-                formIsValid: updatedFormIsValid[0],
+                formIsValid: updatedFormIsValid,
                 inputValues: updatedValues,
                 inputValidities: updatedValidities
 
@@ -42,10 +42,10 @@ const EditProductScreen = props => {
     const productId = props.navigation.getParam('productId');
     const selectedProduct = useSelector(state => state.products.userProducts.find(prod => prod.id === productId));
     console.log("****selectedProduct***")
-    console.log(selectedProduct.title)
-    console.log(selectedProduct.price)
-    console.log(selectedProduct.imageUrl)
-    console.log(selectedProduct.description)
+    console.log(selectedProduct ? selectedProduct.title: '')
+    console.log(selectedProduct ? selectedProduct.price : '')
+    console.log(selectedProduct ? selectedProduct.imageUrl : '')
+    console.log(selectedProduct ? selectedProduct.description : '')
     console.log("****selectedProduct***")
 
     const dispatch = useDispatch();

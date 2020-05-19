@@ -4,6 +4,9 @@ import { Ionicons } from '@expo/vector-icons'
 import Colors from '../constants/Colors';
 
 const CartItem = props => {
+    console.log('title ==> '+props.title)
+    console.log('quantity ==> '+props.quantity)
+    console.log('amount ==> '+props.amount)
     return (
         <View style={styles.cartItem}>
             <View style={styles.itemData}>
@@ -11,7 +14,7 @@ const CartItem = props => {
                 <Text style={styles.number}>{props.quantity}</Text>
             </View>
             <View style={styles.itemData}>
-                <Text style={styles.number}>${props.amount.toFixed(2)}</Text>
+                <Text style={styles.number}>${parseFloat(props.amount).toFixed(2)}</Text>
                 {props.deletable && (<TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
                     <Ionicons name='ios-trash' size={23} color={Colors.warning} />
                 </TouchableOpacity>)}
