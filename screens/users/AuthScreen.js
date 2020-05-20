@@ -1,6 +1,6 @@
 import React, {useState, useReducer, useCallback} from 'react';
 import { useDispatch } from 'react-redux';
-import { View, Button, KeyboardAvoidingView, StyleSheet } from 'react-native'
+import { View, Button, KeyboardAvoidingView, ActivityIndicator, StyleSheet, Alert } from 'react-native'
 import Input from '../../components/Input';
 import { LinearGradient } from 'expo-linear-gradient'
 import Card from '../../components/Card';
@@ -39,6 +39,7 @@ const formReducer = (state, action) => {
 
 const AuthScreen = props => {
     const [isSignUp, setIsSignUp] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -62,14 +63,20 @@ const AuthScreen = props => {
         })
     }, [dispatchFormState])
 
-    const signUpOrLoginHandler = () => {
+    const signUpOrLoginHandler = async () => {
         let actions = null;
         if (isSignUp) {
             actions  = authActions.signUp(formState.inputValues.email, formState.inputValues.password);
         } else {
             actions  = authActions.login(formState.inputValues.email, formState.inputValues.password);
         }
-        dispatch(actions);
+        setIsLoading(true);
+        try {
+            await dispatch(actions);
+        } catch (err) {
+            Alert.alert(err.message, '', [{ text: 'Okay' }])
+        }
+        setIsLoading(false);
     }
     return (<KeyboardAvoidingView
         behavior='padding'
@@ -96,10 +103,10 @@ const AuthScreen = props => {
                     intialValue=''
                 />
                 <View style={styles.buttonContainer}>
-                    <Button
+                    {isLoading ? <ActivityIndicator size='small' color={Colors.primary}/> : <Button
                         title={isSignUp ? 'Sign Up' : 'Login'}
                         color={Colors.primary}
-                        onPress={signUpOrLoginHandler} />
+                        onPress={signUpOrLoginHandler} />}
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button
