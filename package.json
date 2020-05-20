@@ -13,6 +13,7 @@
     "@react-navigation/native": "^5.2.4",
     "expo": "^37.0.8",
     "expo-font": "^8.1.1",
+    "expo-linear-gradient": "^8.1.0",
     "js-beautify": "^1.11.0",
     "moment": "^2.25.3",
     "moments": "0.0.2",

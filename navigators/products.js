@@ -1,5 +1,5 @@
 import React from 'react'
-import { createAppContainer } from 'react-navigation'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Colors from '../constants/Colors';
@@ -10,6 +10,7 @@ import OrdersScreen from '../screens/shop/OrdersScreen';
 import { Ionicons } from '@expo/vector-icons';
 import UserProductsScreen from '../screens/users/UserProductScreen';
 import EditProductScreen from '../screens/users/EditProductScreen';
+import AuthScreen from '../screens/users/AuthScreen';
 
 const defaultNavOptions = {
     headerStyle: {
@@ -23,10 +24,10 @@ const productsNavigator = createStackNavigator(
         productsOverView: ProductsOverViewScreen,
         productDetails: ProductDetailsScreen,
         cart: CartScreen
-    }, 
+    },
     {
         navigationOptions: {
-            drawerIcon: drawerConfig =>  <Ionicons name='ios-cart' size={23} color={drawerConfig.tintColor}/>
+            drawerIcon: drawerConfig => <Ionicons name='ios-cart' size={23} color={drawerConfig.tintColor} />
         },
         defaultNavigationOptions: defaultNavOptions
     });
@@ -37,7 +38,7 @@ const ordersNavigator = createStackNavigator(
     },
     {
         navigationOptions: {
-            drawerIcon: drawerConfig => <Ionicons name='ios-list' size={23} color={drawerConfig.tintColor}/>
+            drawerIcon: drawerConfig => <Ionicons name='ios-list' size={23} color={drawerConfig.tintColor} />
         },
         defaultNavigationOptions: defaultNavOptions
     }
@@ -50,7 +51,7 @@ const adminNavigator = createStackNavigator(
     },
     {
         navigationOptions: {
-            drawerIcon: drawerConfig => <Ionicons name='ios-create' size={23} color={drawerConfig.tintColor}/>
+            drawerIcon: drawerConfig => <Ionicons name='ios-create' size={23} color={drawerConfig.tintColor} />
         },
         defaultNavigationOptions: defaultNavOptions
     }
@@ -71,4 +72,18 @@ const drawerNavigator = createDrawerNavigator(
     }
 );
 
-export default createAppContainer(drawerNavigator);
+const AuthNavigator = createStackNavigator(
+    {
+        Auth: AuthScreen
+    },
+    {
+        defaultNavigationOptions: defaultNavOptions
+    }
+);
+
+const MainNavigator = createSwitchNavigator({
+    Auth: AuthNavigator,
+    Shop: drawerNavigator
+})
+
+export default createAppContainer(MainNavigator);
