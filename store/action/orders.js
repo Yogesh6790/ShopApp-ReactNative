@@ -4,9 +4,13 @@ export const ADD_ORDER = 'ADD_ORDER';
 export const SET_ORDER = 'SET_ORDER';
 
 export const addOrder = (cartItems, totalAmount) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const currentState = getState();
+        const authId = currentState.auth.token;
+        const userId = currentState.auth.userId;
+
         const date = new Date();
-        const response = await fetch(`https://shopapp-db-277705.firebaseio.com/orders/u1.json`, {
+        const response = await fetch(`https://shopapp-db-277705.firebaseio.com/orders/${userId}.json?auth=${authId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -35,13 +39,15 @@ export const addOrder = (cartItems, totalAmount) => {
 }
 
 export const setOrder = () => {
-    return async dispatch => {
-        const response = await fetch('https://shopapp-db-277705.firebaseio.com/orders/u1.json')
+    return async (dispatch, getState) => {
+        const currentState = getState();
+        const userId = currentState.auth.userId;
+        const response = await fetch(`https://shopapp-db-277705.firebaseio.com/orders/${userId}.json`)
         if (!response.ok) {
             throw new Error('Something went wrong');
         }
         const resData = await response.json();
-        console.log(resData);
+        // console.log(resData);
 
         const loadedOrders = [];
         for (const key in resData) {
@@ -53,8 +59,8 @@ export const setOrder = () => {
                     resData[key].date))
         }
 
-        console.log('*** loadedOrders ***');
-        console.log(loadedOrders);
+        // console.log('*** loadedOrders ***');
+        // console.log(loadedOrders);
          dispatch({
             type: SET_ORDER,
             orders: loadedOrders

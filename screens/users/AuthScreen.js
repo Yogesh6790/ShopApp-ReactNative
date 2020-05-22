@@ -73,10 +73,13 @@ const AuthScreen = props => {
         setIsLoading(true);
         try {
             await dispatch(actions);
+            console.log('going to navigate')
+            props.navigation.navigate('Shop');
         } catch (err) {
+            setIsLoading(false)
             Alert.alert(err.message, '', [{ text: 'Okay' }])
         }
-        setIsLoading(false);
+        
     }
     return (<KeyboardAvoidingView
         behavior='padding'

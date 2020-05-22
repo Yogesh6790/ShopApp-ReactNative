@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { FlatList, Button, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, Button, Alert, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import ProductItem from '../../components/ProductItem';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
@@ -26,6 +26,13 @@ const UserProductsScreen = props => {
     const selectItemHandler = (id) => {
         props.navigation.navigate('editProducts', { header: 'Edit Product', productId: id });
     }
+    if (userProducts.length == 0) {
+        return (
+            <View style={styles.centered}>
+                <Text>No producy found! Try creating some!!!</Text>
+            </View>
+        );
+    }
     return <FlatList data={userProducts} keyExtractor={item => item.id} renderItem={itemData => (
         <ProductItem image={itemData.item.imageUrl}
             title={itemData.item.title}
@@ -49,5 +56,13 @@ UserProductsScreen.navigationOptions = navData => {
     };
 
 }
+
+const styles = StyleSheet.create({
+    centered:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+})
 
 export default UserProductsScreen;

@@ -7,10 +7,10 @@ export const SET_PRODUCT = 'SET_PRODUCT';
 
 export const fetchProducts = () => {
     try {
-        return async dispatch => {
-            //any async code could be execute before we could dispatch the action
-            // console.log('Trigerring api');
-            const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.json')
+        return async (dispatch,getState) => {
+            const currentState = getState();
+            const userId = currentState.auth.userId;
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products.json`)
             if (!response.ok) {
                 throw new Error('Some error occurred!')
             }
@@ -22,7 +22,7 @@ export const fetchProducts = () => {
                 loadedProducts.push(
                     new Product(
                         key,
-                        'u1',
+                        resData[key].userId,
                         resData[key].title,
                         resData[key].image,
                         resData[key].description,
@@ -30,7 +30,7 @@ export const fetchProducts = () => {
             }
 
             dispatch({
-                type: SET_PRODUCT, products: loadedProducts
+                type: SET_PRODUCT, products: loadedProducts, userId: userId
             })
         }
     } catch (err) {
@@ -40,8 +40,10 @@ export const fetchProducts = () => {
 
 export const deleteProduct = productId => {
     try {
-        return async dispatch => {
-            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json`, {
+        return async (dispatch, getState) => {
+            const currentState = getState();
+            const authId = currentState.auth.token;
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json?auth=${authId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) {
@@ -56,9 +58,12 @@ export const deleteProduct = productId => {
 
 export const createProduct = (title, description, image, price) => {
     try {
-        return async dispatch => {
+        return async (dispatch, getState) => {
+            const currentState = getState();
+            const authId = currentState.auth.token;
+            const userId = currentState.auth.userId;
             //any async code could be execute before we could dispatch the action
-            const response = await fetch('https://shopapp-db-277705.firebaseio.com/products.json', {
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products.json?auth=${authId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,7 +72,8 @@ export const createProduct = (title, description, image, price) => {
                     title,
                     description,
                     image,
-                    price
+                    price,
+                    userId
                 })
             });
             if (!response.ok) {
@@ -83,7 +89,8 @@ export const createProduct = (title, description, image, price) => {
                     title: title,
                     description: description,
                     image: image,
-                    price: price
+                    price: price,
+                    userId: userId
                 }
             })
         }
@@ -93,9 +100,11 @@ export const createProduct = (title, description, image, price) => {
 }
 
 export const updateProduct = (productId, title, description, image) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const currentState = getState();
+        const authId = currentState.auth.token;
         try {
-            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json`, {
+            const response = await fetch(`https://shopapp-db-277705.firebaseio.com/products/${productId}.json?auth=${authId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

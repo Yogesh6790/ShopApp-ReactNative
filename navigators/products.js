@@ -7,10 +7,13 @@ import ProductsOverViewScreen from '../screens/shop/ProductsOverviewScreen';
 import ProductDetailsScreen from '../screens/shop/ProductDetailsScreen';
 import CartScreen from '../screens/shop/CartScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import UserProductsScreen from '../screens/users/UserProductScreen';
 import EditProductScreen from '../screens/users/EditProductScreen';
 import AuthScreen from '../screens/users/AuthScreen';
+import StartUpScreen from '../screens/StartUpScreen';
+import LogOutScreen  from '../components/Logout';
+import LogOut from '../components/Logout';
 
 const defaultNavOptions = {
     headerStyle: {
@@ -61,11 +64,12 @@ const drawerNavigator = createDrawerNavigator(
     {
         Products: productsNavigator,
         Orders: ordersNavigator,
-        UserProducts: adminNavigator
+        UserProducts: adminNavigator,
     }, {
         contentOptions: {
             activeTintColor: Colors.accent
         },
+        contentComponent: LogOut,
         drawerOpenRoute: 'LeftSideMenu',
         drawerCloseRoute: 'LeftSideMenuClose',
         drawerToggleRoute: 'LeftSideMenuToggle'
@@ -82,6 +86,7 @@ const AuthNavigator = createStackNavigator(
 );
 
 const MainNavigator = createSwitchNavigator({
+    StartUp: StartUpScreen,
     Auth: AuthNavigator,
     Shop: drawerNavigator
 })
