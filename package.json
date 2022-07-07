@@ -15,7 +15,7 @@
     "expo-font": "^8.1.1",
     "expo-linear-gradient": "^8.1.0",
     "js-beautify": "^1.11.0",
-    "moment": "^2.25.3",
+    "moment": "^2.29.4",
     "moments": "0.0.2",
     "react": "~16.9.0",
     "react-devtools": "^3.6.3",
